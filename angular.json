@@ -1,0 +1,171 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "cli": {
+    "packageManager": "npm"
+  },
+  "newProjectRoot": "projects",
+  "projects": {
+    "inventory-app": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "projects/inventory-app",
+      "sourceRoot": "projects/inventory-app/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-architects/native-federation:build",
+          "options": {},
+          "configurations": {
+            "production": {
+              "target": "inventory-app:esbuild:production"
+            },
+            "development": {
+              "target": "inventory-app:esbuild:development",
+              "dev": true
+            },
+            "github-pages": {
+              "target": "inventory-app:esbuild:github-pages"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-architects/native-federation:build",
+          "options": {
+            "target": "inventory-app:serve-original:development",
+            "rebuildDelay": 500,
+            "dev": true,
+            "cacheExternalArtifacts": false,
+            "port": 0
+          }
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "buildTarget": "inventory-app:esbuild:development"
+          }
+        },
+        "esbuild": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "projects/inventory-app/src/main.ts",
+            "tsConfig": "projects/inventory-app/tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "projects/inventory-app/public"
+              }
+            ],
+            "styles": [
+              "projects/inventory-app/src/styles.scss"
+            ],
+            "polyfills": [
+              "es-module-shims"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "700kB",
+                  "maximumError": "1.2MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "12kB",
+                  "maximumError": "18kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            },
+            "github-pages": {
+              "baseHref": "/angular21-erp-crm-inventory-app/",
+              "deployUrl": "/angular21-erp-crm-inventory-app/",
+              "outputHashing": "all"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve-original": {
+          "builder": "@angular/build:dev-server",
+          "options": {
+            "port": 4202
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "inventory-app:esbuild:production"
+            },
+            "development": {
+              "buildTarget": "inventory-app:esbuild:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        }
+      }
+    },
+    "shared-ui": {
+      "projectType": "library",
+      "root": "projects/shared-ui",
+      "sourceRoot": "projects/shared-ui/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "options": {
+            "project": "projects/shared-ui/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/shared-ui/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/shared-ui/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test"
+        }
+      }
+    },
+    "shared-core": {
+      "projectType": "library",
+      "root": "projects/shared-core",
+      "sourceRoot": "projects/shared-core/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "options": {
+            "project": "projects/shared-core/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/shared-core/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/shared-core/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test"
+        }
+      }
+    }
+  }
+}
